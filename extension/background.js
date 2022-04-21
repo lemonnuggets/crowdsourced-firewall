@@ -1,24 +1,25 @@
+const serverUrl = "http://localhost:3000";
 let blockedUrls = [];
 
 const updateBlockedUrls = () => {
-    fetch("http://localhost:3000/all")
+    fetch(`${serverUrl}/all`)
         .then((res) => res.json())
         .then((data) => {
             blockedUrls = data;
         });
 };
-
 setInterval(updateBlockedUrls, 5000);
+
 chrome.webRequest.onBeforeRequest.addListener(
     (details) => {
         const url = details.url;
-        if (url.includes("http://localhost:3000/")) {
+        if (url.includes(serverUrl)) {
             return;
         }
         const blockedUrl = blockedUrls.find((blockedUrl) => {
             return url.includes(blockedUrl.url);
         });
-        if (blockedUrl.upVotes > blockedUrl.downVotes) {
+        if (blockedUrl && blockedUrl.upVotes > blockedUrl.downVotes) {
             return {
                 cancel: true,
             };
@@ -27,6 +28,3 @@ chrome.webRequest.onBeforeRequest.addListener(
     { urls: ["<all_urls>"] },
     ["blocking"]
 );
-
-// google.com
-// google.com/search
