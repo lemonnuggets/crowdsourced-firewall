@@ -40,41 +40,19 @@ app.post("/add", async (req, res) => {
   }
 });
 
-app.post("/downvote", async (req, res) => {
-  const { id, url } = req.body;
-  console.log(`Downvoting url: ${url} with id: ${id}`);
-  try {
-    if (id) {
-      const foundUrl = await Url.findById(id);
-      foundUrl.downVotes += 1;
-      await foundUrl.save();
-      res.send(foundUrl);
-    } else if (url) {
-      const foundUrl = await Url.findOne({ url });
-      if (foundUrl) {
-        foundUrl.downVotes += 1;
-        await foundUrl.save();
-        res.send(foundUrl);
-      } else {
-        const newUrl = new Url({ url });
-        await newUrl.save();
-        res.send(newUrl);
-      }
-    }
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
-
 app.post("/upvote", async (req, res) => {
   const { id, url } = req.body;
   console.log(`Upvoting url: ${url} with id: ${id}`);
   try {
     if (id) {
       const foundUrl = await Url.findById(id);
-      foundUrl.upVotes += 1;
-      await foundUrl.save();
-      res.send(foundUrl);
+      if (foundUrl) {
+        foundUrl.upVotes += 1;
+        await foundUrl.save();
+        res.send(foundUrl);
+      } else {
+        res.status(404).send("ID not found");
+      }
     } else if (url) {
       const foundUrl = await Url.findOne({ url });
       if (foundUrl) {
@@ -86,6 +64,40 @@ app.post("/upvote", async (req, res) => {
         await newUrl.save();
         res.send(newUrl);
       }
+    } else {
+      res.status(400).send("Bad request");
+    }
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+app.post("/downvote", async (req, res) => {
+  const { id, url } = req.body;
+  console.log(`downvoting url: ${url} with id: ${id}`);
+  try {
+    if (id) {
+      const foundUrl = await Url.findById(id);
+      if (foundUrl) {
+        foundUrl.downVotes += 1;
+        await foundUrl.save();
+        res.send(foundUrl);
+      } else {
+        res.status(404).send("ID not found");
+      }
+    } else if (url) {
+      const foundUrl = await Url.findOne({ url });
+      if (foundUrl) {
+        foundUrl.downVotes += 1;
+        await foundUrl.save();
+        res.send(foundUrl);
+      } else {
+        const newUrl = new Url({ url });
+        await newUrl.save();
+        res.send(newUrl);
+      }
+    } else {
+      res.status(400).send("Bad request");
     }
   } catch (error) {
     res.status(500).send(error);
