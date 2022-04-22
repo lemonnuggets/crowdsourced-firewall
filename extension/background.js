@@ -2,7 +2,7 @@ const serverUrl = "http://localhost:3000";
 let blockedUrls = [];
 
 const updateBlockedUrls = () => {
-    fetch(`${serverUrl}/all`)
+    fetch(`${serverUrl}/allBlocked`)
         .then((res) => res.json())
         .then((data) => {
             blockedUrls = data;
@@ -19,7 +19,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         const blockedUrl = blockedUrls.find((blockedUrl) => {
             return url.includes(blockedUrl.url);
         });
-        if (blockedUrl && blockedUrl.upVotes > blockedUrl.downVotes) {
+        if (blockedUrl) {
             return {
                 cancel: true,
             };

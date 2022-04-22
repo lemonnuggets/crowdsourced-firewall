@@ -30,6 +30,16 @@ app.get("/", (req, res) => {
 app.post("/add", async (req, res) => {
   console.log(req.body);
   const { url } = req.body;
+  try {
+    const urlExists = await Url.findOne({ url });
+    if (urlExists) {
+      console.log(`url ${url} already exists`);
+      res.send(urlExists);
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send(err);
+  }
   console.log("Adding url:", url);
   const newUrl = new Url({ url });
   try {
@@ -105,9 +115,9 @@ app.post("/downvote", async (req, res) => {
 });
 
 app.get("/all", async (req, res) => {
-  console.log("Getting all urls");
   try {
     const urls = await Url.find();
+    console.log("Sending all urls: ", urls.length);
     res.send(urls);
   } catch (error) {
     res.status(500).send(error);
@@ -127,6 +137,21 @@ app.post("/check", async (req, res) => {
     } else {
       res.send(false);
     }
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+app.post("/allBlocked", async (req, res) => {
+  try {
+    const urls = await Url.find();
+    const blockedUrls = urls.filter((url) => {
+      return url.upVotes > url.downVotes;
+    });
+    console.log(
+      `Sending ${blockedUrls.length} blocked urls out of ${urls.length}`
+    );
+    res.send(blockedUrls);
   } catch (error) {
     res.status(500).send(error);
   }
