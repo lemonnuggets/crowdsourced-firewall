@@ -3,10 +3,14 @@ let blockedUrls = [];
 
 const updateBlockedUrls = () => {
     fetch(`${serverUrl}/allBlocked`)
-        .then((res) => res.json())
+        .then((res) => {
+            console.log(res);
+            return res.json();
+        })
         .then((data) => {
             blockedUrls = data;
-        });
+        })
+        .catch((err) => console.log(err));
 };
 setInterval(updateBlockedUrls, 5000);
 
