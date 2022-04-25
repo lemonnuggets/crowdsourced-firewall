@@ -115,6 +115,7 @@ app.post("/downvote", async (req, res) => {
 });
 
 app.get("/all", async (req, res) => {
+  console.log("Getting all urls");
   try {
     const urls = await Url.find();
     console.log("Sending all urls: ", urls.length);
@@ -142,7 +143,8 @@ app.post("/check", async (req, res) => {
   }
 });
 
-app.post("/allBlocked", async (req, res) => {
+app.get("/allBlocked", async (req, res) => {
+  console.log("Getting all blocked urls");
   try {
     const urls = await Url.find();
     const blockedUrls = urls.filter((url) => {
