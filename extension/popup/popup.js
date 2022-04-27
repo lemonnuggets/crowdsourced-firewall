@@ -13,6 +13,7 @@ document.querySelector(".reportBtn").addEventListener("click", () => {
         .then((res) => res.json())
         .then((data) => {
             console.log(`${url} reported`, data);
+            document.querySelector("#urlInput").value = "";
         })
         .catch((err) => console.log(err));
 });
